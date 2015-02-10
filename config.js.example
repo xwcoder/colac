@@ -1,0 +1,10 @@
+var config = {
+  //m: true,
+  r: true,
+  f: [
+    //'/Users/creep/code/kit/testlib/',
+    '/Users/creep/code/kitctl/test/lib/'
+  ],
+  o: '/Users/creep/code/all.js'
+};
+module.exports = config;
