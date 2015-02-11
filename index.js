@@ -70,7 +70,7 @@ function walk ( dir, dispose ) {
 
         if ( fs.isDirectory( file ) ) {
             if ( config.r ) {
-                walk( file );
+                walk( file, dispose );
             }
         } else {
             dispose( file );
@@ -97,6 +97,9 @@ module.exports = function () {
     } );
 
     if ( config.o ) {
+        
+        console.log( config );
+        return;
 
         mkdirp.sync( path.dirname( config.o ) );
         if ( config.m ) {
