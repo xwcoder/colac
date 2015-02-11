@@ -17,10 +17,10 @@
     <pre>
         1.标题应为'搜狐视频'
         2.log输出
-            dom
+            ./lib/dom/
             logger
             repeat...
-            dom
+            ./lib/dom/
             logger
     </pre>
     <h1 id="title">标题1</h1>
@@ -31,8 +31,8 @@
 
 cola.use( function ( require ) {
 
-    var dom = require( './cola/dom/' );
-    var logger = require( './cola/logger' )( 'log' );
+    var dom = require( './lib/dom/' );
+    var logger = require( './lib/logger' )( 'log' );
     
     logger.log( dom.name );
     logger.log( logger.name );
@@ -41,8 +41,8 @@ cola.use( function ( require ) {
 
 cola.use( function ( require ) {
 
-    var logger = require( './cola/logger' )( 'log' );
-    var dom = require( './cola/dom/' );
+    var logger = require( './lib/logger' )( 'log' );
+    var dom = require( './lib/dom/' );
     
     logger.log( 'repeat...' );
     logger.log( dom.name );
