@@ -1,5 +1,5 @@
 # colac
-cola的编译、打包工具。
+[cola](https://github.com/xwcoder/cola)的编译、打包工具。
 
 提取cola的模块依赖并前置，避免生产环境中使用分析字符串的方式解析依赖。
 
