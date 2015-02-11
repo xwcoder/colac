@@ -1,2 +1,3 @@
 node_modules/
 .kitctl_inter.js
+config.js

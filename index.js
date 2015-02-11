@@ -13,18 +13,20 @@ var mkdirp = require( 'mkdirp' );
  *  '[-]o': '~/code/all.js', //输出文件
  * }
  */
-var config = require( './lib/parseconfig' )();
+
 var interFile = path.join( __dirname, '.kitctl_inter.js' );
 
-try {
-    fs.unlink( interFile );
-} catch ( e ) {}
+var config = require( './lib/parseconfig' )();
 
 require( './lib/define' ).setUp( interFile );
 
 function dispose ( file ) {
 
-    if ( /\.min\./.test( file ) ) {
+    //if ( /\.min\./.test( file ) ) {
+    //    return;
+    //}
+
+    if ( !( /^([^-]+)-debug(\..+)$/.test( file ) ) ) {
         return;
     }
 
@@ -34,14 +36,15 @@ function dispose ( file ) {
 
     if ( !config.o ) { //没有指定输出
 
-        var basename = path.basename( file );
+        //var basename = path.basename( file );
 
-        if ( /^([^-]+)-debug(\..+)$/.test( basename ) ) {
-            file = file.replace( /^([^-]+)-debug(\..+)$/, '$1$2' );
-        }  else {
-            file = path.join( path.dirname( file ), path.basename( file, path.extname( file ) ) + '.min' + path.extname( file ) );
-        }
+        //if ( /^([^-]+)-debug(\..+)$/.test( basename ) ) {
+        //    file = file.replace( /^([^-]+)-debug(\..+)$/, '$1$2' );
+        //}  else {
+        //    file = path.join( path.dirname( file ), path.basename( file, path.extname( file ) ) + '.min' + path.extname( file ) );
+        //}
 
+        file = file.replace( /^([^-]+)-debug(\..+)$/, '$1$2' );
         mkdirp.sync( path.dirname( file ) );
         fs.close( fs.open( file, 'w' ) );
 
@@ -75,25 +78,34 @@ function walk ( dir, dispose ) {
     }
 };
 
-config.f.forEach( function ( f ) {
-    if ( fs.isDirectory( f ) ) {
-        walk( f, dispose );
-    } else {
-        dispose( f );
-    }
-} );
-
-if ( config.o ) {
-
-    mkdirp.sync( path.dirname( config.o ) );
-    if ( config.m ) {
-        fs.writeFile( config.o, compress( interFile ), {encoding: 'utf8'});
-    } else {
-        fs.close( fs.open( config.o, 'w' ) );
-        _fs.createReadStream( interFile ).pipe( _fs.createWriteStream( config.o ) );            
-    }
+function clean () {
+    try {
+        fs.unlink( interFile );
+    } catch ( e ) {}
 }
 
-try {
-    //fs.unlink( interFile );
-} catch ( e ) {}
+module.exports = function () {
+
+    clean();
+
+    config.f.forEach( function ( f ) {
+        if ( fs.isDirectory( f ) ) {
+            walk( f, dispose );
+        } else {
+            dispose( f );
+        }
+    } );
+
+    if ( config.o ) {
+
+        mkdirp.sync( path.dirname( config.o ) );
+        if ( config.m ) {
+            fs.writeFile( config.o, compress( interFile ), {encoding: 'utf8'});
+        } else {
+            fs.close( fs.open( config.o, 'w' ) );
+            _fs.createReadStream( interFile ).pipe( _fs.createWriteStream( config.o ) );            
+        }
+    }
+    
+    clean();
+};
