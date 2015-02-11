@@ -84,7 +84,24 @@ function clean () {
     } catch ( e ) {}
 }
 
+var  hc = '参数：' +
+    '\n -m : 是否压缩' +
+    '\n -r : 是否递归目录' +
+    '\n -c : 配置文件，参考config.js.example' +
+    '\n -o : 输出文件' +
+    '\n example:' +
+    '\n colac lib/dom/index-debug.js' +
+    '\n colac -rm lib/dom/' +
+    '\n colac -c ./config.js' +
+    '\n colac -rm lib/dom/ -o ./dist/a.js';
+    
+
 module.exports = function () {
+
+    if ( !config.f || !config.f.length ) {
+        console.info( hc );
+        return;
+    }
 
     clean();
 
