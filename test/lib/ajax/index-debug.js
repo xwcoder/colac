@@ -1,4 +1,4 @@
-define( './lib/ajax/', function ( require, module, exports ) {
+define( './lib/ajax/', function ( require, exports, module ) {
     var dom = require( './lib/dom/' );
 
     module.exports = {

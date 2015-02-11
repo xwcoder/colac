@@ -1,4 +1,4 @@
-define( './lib/event/', function ( require, module, exports ) {
+define( './lib/event/', function ( require, exports, module ) {
     var dom = require( './lib/dom/' );
 
     module.exports = {
