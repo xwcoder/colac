@@ -14,7 +14,7 @@ var mkdirp = require( 'mkdirp' );
  * }
  */
 
-var interFile = path.join( __dirname, '.kitctl_inter.js' );
+var interFile = path.join( __dirname, '._colac_inter.js' );
 
 var config = require( './lib/parseconfig' )();
 
@@ -98,9 +98,6 @@ module.exports = function () {
 
     if ( config.o ) {
         
-        console.log( config );
-        return;
-
         mkdirp.sync( path.dirname( config.o ) );
         if ( config.m ) {
             fs.writeFile( config.o, compress( interFile ), {encoding: 'utf8'});
