@@ -1,6 +1,6 @@
 {
   "name": "colac",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "dependencies": {
     "uglify-js": "~2.4.13",
