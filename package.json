@@ -1,15 +1,34 @@
 {
-  "name": "kitctl",
+  "name": "colac",
   "version": "1.0.0",
   "description": "",
   "dependencies": {
-    "uglify-js" : "~2.4.13",
-    "mkdirp" : "~0.4.0"
+    "uglify-js": "~2.4.13",
+    "mkdirp": "~0.4.0"
   },
   "main": "index.js",
+  "bin": {
+    "colac": "./bin/colac"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "creep",
+  "license": "MIT",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xwcoder/colac.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xwcoder/colac/issues"
+  },
+  "homepage": "https://github.com/xwcoder/colac",
+  "engines": {
+		"node": ">=0.12.0"
+	}
 }
