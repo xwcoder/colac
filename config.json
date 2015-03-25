@@ -1,0 +1,17 @@
+{
+  "option": {
+    "m": false
+  },
+  "task": [
+    {
+      "option": {
+        "m": true
+      },
+      "file": [
+        "testlib/**/*.js"
+      ],
+      "dest": "all.js",
+      "dist": "dist"
+    }
+  ]
+}

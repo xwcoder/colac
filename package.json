@@ -1,10 +1,11 @@
 {
   "name": "colac",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "",
   "dependencies": {
-    "uglify-js": "~2.4.13",
-    "mkdirp": "~0.4.0"
+    "glob": "^5.0.3",
+    "mkdirp": "~0.4.0",
+    "uglify-js": "~2.4.13"
   },
   "main": "index.js",
   "bin": {
@@ -29,6 +30,6 @@
   },
   "homepage": "https://github.com/xwcoder/colac",
   "engines": {
-		"node": ">=0.12.0"
-	}
+    "node": ">=0.12.0"
+  }
 }

@@ -3,92 +3,40 @@ var fs = require( './lib/fs' );
 var path = require( 'path' );
 var compress = require( './lib/compress' );
 var mkdirp = require( 'mkdirp' );
+require( './lib/define' ).setUp();
 
-/**
- * var config = {
- *  '[-]r': false, //是否递归(目录)
- *  '[-]m': false, //是否压缩
- *  '[-]c': '~/code/config', // 配置文件
- *  'f:' ['./lib/dom.js'] // 待处理文件
- *  '[-]o': '~/code/all.js', //输出文件
- * }
- */
+var defineMap = {};
 
-var interFile = path.join( __dirname, '._colac_inter.js' );
+global.defineArray = [];
+global.useArray = [];
 
-var config = require( './lib/parseconfig' )();
-
-require( './lib/define' ).setUp( interFile );
-
-function dispose ( file ) {
-
-    //if ( /\.min\./.test( file ) ) {
-    //    return;
-    //}
-
-    if ( !( /^([^-]+)-debug(\..+)$/.test( file ) ) ) {
-        return;
-    }
-
-    fs.close( fs.open( interFile, 'a' ) );
-
-    require( file );
-
-    if ( !config.o ) { //没有指定输出
-
-        //var basename = path.basename( file );
-
-        //if ( /^([^-]+)-debug(\..+)$/.test( basename ) ) {
-        //    file = file.replace( /^([^-]+)-debug(\..+)$/, '$1$2' );
-        //}  else {
-        //    file = path.join( path.dirname( file ), path.basename( file, path.extname( file ) ) + '.min' + path.extname( file ) );
-        //}
-
-        file = file.replace( /^([^-]+)-debug(\..+)$/, '$1$2' );
-        mkdirp.sync( path.dirname( file ) );
-        fs.close( fs.open( file, 'w' ) );
-
-        if ( config.m ) {
-            var content = compress( interFile );
-            fs.writeFile( file, content, {encoding: 'utf8'});
-        } else {
-            _fs.createReadStream( interFile ).pipe( _fs.createWriteStream( file ) );            
-        }
-
-        fs.unlink( interFile );
-    }
-};
-
-function walk ( dir, dispose ) {
-
-    var files = fs.readdir( dir );
-    var i = 0, file;
-
-    while ( file = files[i++] ) {
-
-        file = path.join( dir, file );
-
-        if ( fs.isDirectory( file ) ) {
-            if ( config.r ) {
-                walk( file, dispose );
-            }
-        } else {
-            dispose( file );
-        }
-    }
-};
+var tasks = require( './lib/parseconfig' )();
+var task = null;
 
 function clean () {
-    try {
-        fs.unlink( interFile );
-    } catch ( e ) {}
+    defineMap = {};
+    global.defineArray = [];
+    global.useArray = [];
 }
 
-var  hc = '参数：' +
+function clear () {
+    global.defineArray = [];
+    global.useArray = [];
+}
+
+var  hc = '' +
+'\n                  _                ' +
+'\n                 | |               ' +
+'\n    ___    ___   | |   __ _    ___ ' +
+'\n   / __|  / _ \\  | |  / _` |  / __|' +
+'\n  | (__  | (_) | | | | (_| | | (__ ' +
+'\n   \\___|  \\___/  |_|  \\__,_|  \\___|' +
+    '\n\n 参数：' +
     '\n -m : 是否压缩' +
     '\n -r : 是否递归目录' +
-    '\n -c : 配置文件，参考config.js.example' +
     '\n -o : 输出文件' +
+    '\n -c : 配置文件，参考config.json.example' +
+    '\n' +
     '\n example:' +
     '\n colac lib/dom/index-debug.js' +
     '\n colac -rm lib/dom/' +
@@ -98,31 +46,70 @@ var  hc = '参数：' +
 
 module.exports = function () {
 
-    if ( !config.f || !config.f.length ) {
+    if ( !tasks.length ) {
         console.info( hc );
         return;
     }
 
     clean();
 
-    config.f.forEach( function ( f ) {
-        if ( fs.isDirectory( f ) ) {
-            walk( f, dispose );
-        } else {
-            dispose( f );
+    tasks.forEach( function ( task ) {
+
+        clean();
+        
+        task.file.forEach( function ( filepath ) {
+
+            clear();
+            require( path.resolve( filepath ) ); 
+
+            defineMap[filepath] = {
+                defineArray: global.defineArray,
+                useArray: global.useArray
+            }
+        } );
+
+        //处理结果
+        //defineMap = { '/dom.js': { defineArray: [], useArray: [] } }
+
+        var defineArr = [];
+        var useArr = [];
+        var content;
+
+        if ( task.dest ) { // 合并文件
+            for ( var p in defineMap ) {
+                defineArr = defineArr.concat( defineMap[p].defineArray );
+                useArr = useArr.concat( defineMap[p].useArray );
+            }
+
+            content = defineArr.join( '\n' ) + useArr.join( '\n' );
+
+            if ( task.option.m ) { //压缩
+                content = compress( content );
+            }
+            
+            fs.writeFile( path.resolve( task.dest ), content );
+
+            console.info( '保存文件' + task.dest + ' 成功' );
+        }
+        
+        if ( task.dist ) {
+            for ( var p in defineMap ) {
+
+                content = defineMap[p].defineArray.join( '\n' ) + defineMap[p].useArray.join( '\n' );
+
+                if ( task.option.m ) {
+                    content = compress( content );
+                }
+
+                var distFilepath = path.join( task.dist, p );
+                mkdirp.sync(  path.dirname( distFilepath ) );
+
+                fs.writeFile( distFilepath, content );
+            }
+
+            console.info( '编译文件到' + task.dist + ' 成功' );
         }
     } );
-
-    if ( config.o ) {
-        
-        mkdirp.sync( path.dirname( config.o ) );
-        if ( config.m ) {
-            fs.writeFile( config.o, compress( interFile ), {encoding: 'utf8'});
-        } else {
-            fs.close( fs.open( config.o, 'w' ) );
-            _fs.createReadStream( interFile ).pipe( _fs.createWriteStream( config.o ) );            
-        }
-    }
     
     clean();
 };

@@ -40,7 +40,7 @@ define("./lib/dom/", ["./lib/ajax/","./lib/event/"], function ( require, exports
 参数：
  -m : 是否压缩
  -r : 是否递归目录
- -c : 配置文件，参考config.js.example
+ -c : 配置文件，参考config.json.example
  -o : 输出文件
  
  example:
